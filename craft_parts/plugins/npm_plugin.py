@@ -277,6 +277,9 @@ class NpmPlugin(Plugin):
             self._node_binary_path = os.path.join(
                 self._part_info.part_cache_dir, file_name
             )
+            save_state = self._part_info.part_state_dir.joinpath("node-cache")
+            with open(save_state, "w") as file:
+                file.write(self._node_binary_path)
             return [
                 dedent(
                     f"""\
@@ -308,6 +311,10 @@ class NpmPlugin(Plugin):
             """
             )
         ]
+        save_state = self._part_info.part_state_dir.joinpath("node-cache")
+        if save_state.exists():
+            with open(save_state) as file:
+                self._node_binary_path = file.read().strip()
         if self._node_binary_path is not None:
             cmd.insert(
                 0,
